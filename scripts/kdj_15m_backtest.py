@@ -161,6 +161,8 @@ def simulate(bars:list[Bar],signal:list[int],fee_bps:float,slip_bps:float,save_t
     losses=[x for x in trades if x['net_pct']<=0]
     sumwins=sum(x['net_pct'] for x in wins)
     sumlosses=sum(x['net_pct'] for x in losses)
+    money_wins=sum(x['pnl_usdt'] for x in trades if x['pnl_usdt']>0)
+    money_losses=sum(x['pnl_usdt'] for x in trades if x['pnl_usdt']<0)
     days=len(daily)
     day_end=list(daily.values())
     daily_rets=[b/a-1 for a,b in zip([10_000.0]+day_end[:-1],day_end)]
@@ -181,7 +183,7 @@ def simulate(bars:list[Bar],signal:list[int],fee_bps:float,slip_bps:float,save_t
         'long_win_pct':r(100*sum(x['net_pct']>0 for x in longs)/len(longs)) if longs else None,
         'short_win_pct':r(100*sum(x['net_pct']>0 for x in shorts)/len(shorts)) if shorts else None,
         'overall_win_pct':r(100*len(wins)/n) if n else None,
-        'profit_factor':r(sumwins/-sumlosses) if sumlosses<0 else None,
+        'profit_factor':r(money_wins/-money_losses) if money_losses<0 else None,
         'avg_trade_net_pct':r(sum(x['net_pct'] for x in trades)/n) if n else None,
         'avg_win_pct':r(sumwins/len(wins)) if wins else None,
         'avg_loss_pct':r(sumlosses/len(losses)) if losses else None,
