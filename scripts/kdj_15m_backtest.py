@@ -2,7 +2,7 @@
 """Reproducible Binance USDT-M perpetual 15m KDJ K/D crossover backtest.
 Run: python kdj_15m_backtest.py
 Data: data.binance.vision (public Binance official OHLCV archives).
-UTC evaluation: 2025-11-06 00:00 through 2026-11-06 00:00 exclusive.
+UTC evaluation: 2025-11-06 00:00 through 2026-10-28 00:00 exclusive; Oct 28 missing in Binance futures archive.
 """
 from __future__ import annotations
 import csv, io, json, math, os, statistics, time, urllib.request, zipfile
@@ -13,7 +13,7 @@ from pathlib import Path
 
 UTC=timezone.utc
 START=datetime(2025,11,6,tzinfo=UTC)
-END=datetime(2026,11,6,tzinfo=UTC)
+END=datetime(2026,10,28,tzinfo=UTC)
 INTERVAL=timedelta(minutes=15)
 OUT=Path('kdj_15m_results')
 SYMBOLS=('BTCUSDT','ETHUSDT')
@@ -207,7 +207,7 @@ def main():
         'market':'Binance USD-M perpetual futures, BTCUSDT and ETHUSDT',
         'equity':'Each symbol starts with 10,000 USDT, 1x notional of current equity, full compounding, only one position per symbol, no leverage/margin liquidation, funding excluded.',
         'ambiguity':'If TP and SL both touch within the same 15m bar, STOP is filled first; adverse gaps fill at open.',
-        'data':'Binance Vision monthly archives 2025-11 to 2026-10 + daily 2026-11-01 to 2026-11-05, UTC.',
+        'data':'Binance Vision monthly archives 2025-11 to 2026-10. Runs through Oct 27 inclusive; Oct 28 futures 15m data absent from Binance official archive, so post-gap period is excluded.',
         'scenarios':{'ideal':{'fee_bps':0,'slippage_bps':0},
                      'base':{'fee_bps':5,'slippage_bps':2},
                      'stress':{'fee_bps':10,'slippage_bps':3}},'results':{}
